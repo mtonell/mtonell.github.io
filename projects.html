@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matteo Tonello | AI & Robotics Projects</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23090d16'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-size='50' font-family='sans-serif' font-weight='bold' fill='%2358a6ff'>MT</text></svg>">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header style="justify-content: center; text-align: center; padding-bottom: 12px; margin-bottom: 20px;">
+    <div class="hero-info">
+      <a href="./" style="text-decoration: none;">
+        <h1 style="font-size: 1.6rem;">Matteo Tonello</h1>
+      </a>
+    </div>
+  </header>
+
+  <!-- Filter & Search Controls -->
+  <div class="controls-panel">
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by model, tool, topic, or keyword (e.g. OpenCV, RAG, Python, Robotics)...">
+    </div>
+        <div style="display: flex; align-items: center; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
+       <div style="position: relative;" id="filterContainer">
+         <button class="filter-chip active" id="filterDropdownToggle" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; margin: 0; background: #0d121e; border: 1px solid var(--border-subtle); cursor: pointer;">
+           <i class="fas fa-filter"></i> <span id="filterLabel">All Projects</span> <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 4px;"></i>
+         </button>
+         <div id="filterDropdown" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 8px; background: #0d121e; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; width: 340px; max-height: 400px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.9);">
+           <!-- Generated chips go here -->
+         </div>
+       </div>
+       <div style="display: flex; align-items: center; gap: 8px;">
+         <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Sort By:</span>
+         <select id="sortSelect" onchange="applyFilters()" style="background: #0d121e; border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; outline: none; cursor: pointer;">
+           <option value="relevance">Relevance</option>
+           <option value="year_desc">Year (Newest)</option>
+           <option value="year_asc">Year (Oldest)</option>
+           <option value="alpha">Alphabetical</option>
+         </select>
+       </div>
+    </div>
+  </div>
+
+  <!-- Rows List -->
+  <div class="projects-list" id="projectsList"></div>
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightbox-img" class="lightbox-content" src="" alt="Full Screen Visual">
+</div>
+
+<!-- Permission Modal -->
+<div id="permissionModal" class="lightbox" style="display: none; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2000;" onclick="closePermissionModal(event)">
+  <div style="background: #0d121e; border: 1px solid #30363d; padding: 24px; border-radius: 12px; max-width: 400px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.9);" onclick="event.stopPropagation()">
+    <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 1.2rem;">Access Request</h3>
+    <p style="font-size: 0.9rem; color: #a3a3a3; margin-bottom: 24px; line-height: 1.5;">
+      Sensitive data: <strong style="color: #f0f6fc;">please write your name and your purpose for access in the comment box</strong>. 
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button onclick="closePermissionModal(event)" style="padding: 8px 16px; border-radius: 6px; background: transparent; border: 1px solid #30363d; color: white; cursor: pointer; font-weight: 600;">Cancel</button>
+      <a id="askPermissionBtn" href="#" target="_blank" style="padding: 8px 16px; border-radius: 6px; background: #1f6feb; border: 1px solid #388bfd; color: white; text-decoration: none; font-weight: 600; cursor: pointer;" onclick="closePermissionModal(event)">Continue</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const GH_USERNAME = "mtonell";
+
+const projects = [
+  {
+    title: "Deep Learning Framework for UAV-Mounted GPR Hazard Detection",
+    category: "Master Thesis / Space Applications",
+    year: "2026",
+    topics: ["Deep Learning", "Robotics", "Computer Vision", "Multimodal Sensor Fusion", "Domain Adaptation", "Object Detection"],
+    desc: "Engineered deep learning framework tailored for UAV-mounted GPR threat detection, using specific image preprocessing, multimodal sensor fusion, and offline TTA to mitigate domain shifts.",
+    langs: ["Python", "C++"],
+    tools: ["PyTorch", "ROS 2", "Docker", "OpenCV", "Ultralytics", "TensorBoard", "DearPyGUI"],
+    link: "https://hdl.handle.net/20.500.12608/106602",
+    report: "https://drive.google.com/file/d/1QeAH5oaz8m6ntSIO0VcE45xStlbkbCoN/view?usp=sharing",
+    requiresPermission: true,
+    images: [], // Add URLs here when you have them hosted on GitHub
+    details: [
+      "Created a custom annotation GUI for multi-modal data fusion with confidence-based uncertainty modeling.",
+      "Implemented different filtering and preprocessing techniques to enhance GPR signal quality.",
+      "Conducted Leave-One-Domain-Out benchmarking on YOLO11n, RT-DETR, and Faster R-CNN architectures.",
+      "Evaluated streaming performance with Area Under F2-Curve and Event Recall metrics.",
+      "Strictly optimized for safety and robustness against domain shifts"
+    ]
+  },
+  {
+    title: "Tennis Vision Analytics System",
+    category: "Computer Vision (In Progress)",
+    year: "2026",
+    topics: ["Deep Learning", "Computer Vision", "Object Detection", "Object Tracking", "Object Segmentation", "Object Pose Estimation"],
+    desc: "A modular computer vision pipeline for tennis match analysis.",
+    langs: [], // Merged automatically from subProjects
+    tools: [], // Merged automatically from subProjects
+    repo: "", 
+    images: [], // e.g., ["https://raw.githubusercontent.com/.../demo.gif"]
+    details: [
+      "<strong>Work in Progress:</strong> Designing a scalable, multi-module architecture to extract professional-grade analytics from single-camera footage."
+    ],
+    subProjects: [
+      {
+        title: "Module 1: Court Boundary Tracker",
+        desc: "Detects court lines via Hough transforms and calculates homography to map pixel coordinates to a 2D court model.",
+        repo: "tennis-vision-court-tracker",
+    year: "2026",
+    images: ["https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/demo.webp", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/readme_refinement_showcase.jpg", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/real_image_flow.jpg", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/latency_vs_accuracy.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/cdf_window.png"],
+        langs: ["Python", "C++"],
+        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Hough Transforms", "Homography"]
+      },
+      {
+        title: "Module 2: Ball Event Tracker",
+        desc: "Isolates high-speed ball movements and classifies hit/bounce events via temporal sequence analysis.",
+        repo: "tennis-vision-ball-event",
+    year: "2026",
+    images: ["https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/demo.webp", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/architecture_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/window_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/speed_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/tuning_impact_results.png"],
+        langs: ["Python"],
+        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Object Detection", "Sequence Analysis"]
+      }
+    ]
+  },
+  {
+    title: "8-Ball Billiard Video Analytics",
+    category: "Computer Vision",
+    topics: ["Computer Vision", "Object Detection", "Object Tracking", "Object Segmentation"],
+    desc: "Developed a classical computer vision system to analyze '8 Ball' billiard video clips by tracking balls and game status. Detected boundaries and classified balls.",
+    langs: ["C++"],
+    tools: ["OpenCV", "CMake", "Object Tracking", "Homography"],
+    repo: "billiard-video-analysis-cv",
+    year: "2024",
+        images: ["https://raw.githubusercontent.com/mtonell/billiard-video-analysis-cv/main/examples/video.gif", "https://raw.githubusercontent.com/mtonell/billiard-video-analysis-cv/main/examples/table_detection.png", "https://raw.githubusercontent.com/mtonell/billiard-video-analysis-cv/main/examples/ball_detection.png", "https://raw.githubusercontent.com/mtonell/billiard-video-analysis-cv/main/examples/ball_classification.png"], 
+    details: [
+      "Segmented table playing boundaries and classified balls via dynamic color-space thresholding.",
+      "Calculated planar homography matrix to project tracking coordinates onto a 2D minimap.",
+      "Tracking ball trajectories from video frames and visualizing them live on the minimap."
+    ]
+  },
+  {
+    title: "6D Object Pose Estimation Methodologies",
+    category: "Bachelor Thesis",
+    year: "2023",
+    topics: ["Computer Vision", "Robotics", "PRISMA Review"],
+    desc: "Systematic literature review following PRISMA protocol on state-of-the-art 6D object pose estimation under heavy occlusion.",
+    langs: ["MATLAB", "Python"],
+    tools: ["PRISMA Protocol", "Pose Estimation"],
+    link: "https://thesis.unipd.it/handle/20.500.12608/52406",
+    report: "https://thesis.unipd.it/retrieve/07a9c587-3a6e-4d82-a3b6-74dd1917e8f5/Tonello_Matteo.pdf", 
+    details: [
+      "Provided a comprehensive overview of state-of-the-art methods for 6D object pose estimation.",
+      "Focused specifically on techniques that handle occlusions and partial object visibility."
+    ]
+  },
+  {
+    title: "Explainable Breast Cancer Diagnosis",
+    category: "Healthcare AI",
+    topics: ["Healthcare AI", "Machine Learning", "Explainable AI", "Data Imbalance"],
+    desc: "Built linear and non-linear ML classifiers, improving NPV to strictly minimize clinical false negatives. Integrated SHAP values for model explainability.",
+    langs: ["Jupyter Notebook", "Python"],
+    tools: ["Scikit-Learn", "Imbalanced-learn", "NumPy", "Pandas", "SHAP"],
+    repo: "breast-cancer-diagnosis-ml",
+    year: "2025",
+    images: ["https://raw.githubusercontent.com/mtonell/breast-cancer-diagnosis-ml/main/images/shap.png", "https://raw.githubusercontent.com/mtonell/breast-cancer-diagnosis-ml/main/images/random_forest_plots.png"],
+    details: [
+      "Engineered ensemble ML classifiers to improve diagnostic accuracy on imbalanced breast cancer datasets.",
+      "Maximized Negative Predictive Value (NPV) to eliminate false negatives in clinical triage.",
+      "Derived local/global SHAP importance values and Partial Dependence Plots for physician interpretation."
+    ]
+  },
+  {
+    title: "Diabetes Risk Assessment Multi-Agent",
+    category: "Healthcare AI",
+    topics: ["Healthcare AI", "Machine Learning", "Ensemble ML", "Data Imbalance"],
+    desc: "Engineered a multi-agent diagnostic system using undersampling to address class imbalance in the 2015 BRFSS dataset. Built a voting ensemble.",
+    langs: ["Jupyter Notebook", "Python"],
+    tools: ["Scikit-Learn", "Imbalanced-learn", "NumPy", "Pandas"],
+    repo: "diabetes-risk-assessment-ml",
+    year: "2024",
+    images: ["https://raw.githubusercontent.com/mtonell/diabetes-risk-assessment-ml/main/images/example.png"],
+    details: [
+      "Tackled severe medical class imbalance via stratified undersampling without losing positive diagnostic signals.",
+      "Optimized decision boundaries for clinical recall to minimize false negatives."
+    ]
+  },
+  {
+    title: "Multimodal ScienceQA Assistant",
+    category: "Generative AI",
+    topics: ["Deep Learning", "LLMs", "RAG", "Multimodal AI"],
+    desc: "Engineered a RAG pipeline using GPT-3.5 and ChromaDB to ground responses on the ScienceQA dataset. Integrated multi-modal text and image embeddings.",
+    langs: ["Jupyter Notebook", "Python"],
+    tools: ["LangChain", "ChromaDB", "OpenCLIP", "BLIP-2"],
+    repo: "multimodal-rag-llm-scienceQA",
+    year: "2024",
+    images: ["https://raw.githubusercontent.com/mtonell/multimodal-rag-llm-scienceQA/main/images/results.png"],
+    details: [
+      "Engineered multimodal RAG pipeline combining BLIP-2 captions and OpenCLIP image vectors in ChromaDB.",
+      "Evaluated generation using BLEU and cosine similarity across multimodal contexts."
+    ]
+  },
+  {
+    title: "Automatic Poker Card Recognition",
+    category: "Computer Vision",
+    topics: ["Machine Learning", "Computer Vision", "Ensemble ML", "Feature Extraction"],
+    desc: "Built a pipeline for image segmentation and complex feature extraction (spatial histograms) to identify poker cards. Built an ensemble classifier.",
+    langs: ["Python"],
+    tools: ["OpenCV", "Scikit-Learn", "NumPy", "Pandas"],
+    repo: "poker-card-classifier-cv",
+    year: "2025",
+    images: ["https://raw.githubusercontent.com/mtonell/poker-card-classifier-cv/main/assets/demo_result.png", "https://raw.githubusercontent.com/mtonell/poker-card-classifier-cv/main/assets/histogram.png"],
+    details: [
+      "Segmented card regions and suits under variable illumination and geometric rotations.",
+      "Engineered spatial histograms and moments to classify cards at 97.3% test accuracy."
+    ]
+  },
+  {
+    title: "TonyBot: Interactive Mobile Robot",
+    category: "Robotics",
+    topics: ["Robotics", "Embedded Systems", "Mobile Robotics"],
+    desc: "Constructed a DIY Bluetooth-controlled robot with Arduino Nano, capable of line following, obstacle avoidance, gesture-based control, and LED expressions.",
+    langs: ["C++"],
+    tools: ["Arduino", "Bluetooth", "MIT App Inventor"],
+    repo: "TonyBot",
+    year: "2025",
+    images: ["https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/videos/mode_line_follower.gif", "https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/images/robot_showcase.jpg", "https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/images/circuit_schema.png"],
+    details: [
+      "Integrated dual-motor differential drive, infrared array tracking, and ultrasonic collision prevention.",
+      "Engineered an Android companion application for real-time mode-switching and gesture commands."
+    ]
+  },
+  {
+    title: "Structure from Motion (SfM) Pipeline",
+    category: "3D Computer Vision",
+    topics: ["Computer Vision", "3D Vision", "3D Reconstruction"],
+    desc: "C++ implementation of a Structure from Motion (SfM) pipeline for 3D reconstruction from 2D image sequences.",
+    langs: ["C++"],
+    tools: ["OpenCV", "Epipolar Geometry", "Triangulation", "Bundle Adjustment"],
+    repo: "sfm-pipeline-3d-cv",
+    year: "2024",
+    images: ["https://raw.githubusercontent.com/mtonell/sfm-pipeline-3d-cv/main/example/reconstruction.png", "https://raw.githubusercontent.com/mtonell/sfm-pipeline-3d-cv/main/example/matching.png"],
+    details: [
+      "Extracted and matched feature points across 2D image sequences.",
+      "Estimated camera poses and triangulated 3D points to reconstruct sparse point clouds."
+    ]
+  },
+  {
+    title: "LocalPointNet 3D Descriptor",
+    category: "3D Deep Learning",
+    topics: ["Computer Vision", "Deep Learning", "3D Vision", "Point Clouds"],
+    desc: "Python implementation of LocalPointNet for extracting robust 3D local descriptors from point clouds.",
+    langs: ["Python"],
+    tools: ["Open3D", "Feature Extraction", "PyTorch", "CMake", "PointNet"],
+    repo: "LocalPointNet-3D-descriptor",
+    year: "2024",
+    images: ["https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/visualization_anchor.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/visualization_neg_pos.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/original_architecture.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/report_loss_curve.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/report_noise_robustness.png"],
+    details: [
+      "Extracted 3D local descriptors for matching and registration.",
+      "Implemented PointNet-based architectures for deep feature learning on raw point clouds.",
+      "Evaluated the performance of the descriptors under various noise levels and radius variations."
+    ]
+  },
+  {
+    title: "2D Quadcopter Control Simulation",
+    category: "Robotics & Simulation",
+    topics: ["Robotics", "Control Systems", "Simulation"],
+    desc: "MATLAB-based simulation modeling 2D quadcopter flight dynamics and control systems.",
+    langs: ["MATLAB"],
+    tools: ["PID Controller", "Flight Dynamics", "MathWorks"],
+    repo: "2d-quadcopter-control-simulation",
+    year: "2024",
+    images: ["https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/figure8.gif", "https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/diamond.gif", "https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/sine.gif"],
+    details: [
+      "Developed mathematical models representing 2D flight dynamics.",
+      "Programmed control algorithms for robust quadcopter stabilization."
+    ]
+  },
+  {
+    title: "Vision Math Solver",
+    category: "Computer Vision",
+    topics: ["Deep Learning", "Computer Vision", "Gesture Recognition", "Object Pose Estimation", "OCR"],
+    desc: "Computer vision application to detect, parse, and solve handwritten mathematical equations.",
+    langs: ["Python", "JavaScript"],
+    tools: ["OpenCV", "Algorithmic Parsing", "NumPy", "SymPy", "PyTorch", "MediaPipe"],
+    repo: "vision-math-solver",
+    year: "2026",
+    images: ["https://raw.githubusercontent.com/mtonell/vision-math-solver/main/demo/app_fast.webp", "https://raw.githubusercontent.com/mtonell/vision-math-solver/main/demo/ai_vision_fast.webp"],
+    link: "https://mtonell.github.io/vision-math-solver/",
+    details: [
+      "Use Mediapipe to detect and isolate handwritten mathematical expressions from images.",
+      "A CNN to segment and classify handwritten digits and symbols, trained on MNIST and synthetic datasets.",
+      "Implemented an algorithmic parser to evaluate mathematical expressions programmatically."
+    ]
+  },
+  {
+    title: "Interactive AI Tutor",
+    category: "Web & Generative AI",
+    topics: ["Generative AI", "Web Development", "LLMs"],
+    desc: "Interactive AI tutoring web application built with JavaScript to assist users with real-time educational feedback.",
+    langs: ["JavaScript"],
+    tools: ["LLM APIs", "Frontend Web", "UX Design", "Chat Interface"],
+    repo: "tutor-ai",
+    year: "2026",
+    images: ["https://raw.githubusercontent.com/mtonell/tutor-ai/main/frontend/public/logo.png"],
+    link: "https://tutorai-live.vercel.app",
+    details: [
+      "Developed an intuitive chat interface for seamless human-AI interaction.",
+      "Integrated external LLM APIs to provide context-aware educational assistance.",
+      "Utilized the Gemini API to generate personalized notes, summaries, and recommendations."
+    ]
+  }
+];
+
+// Data Pre-processing: Auto-merge submodule tags into the parent project
+projects.forEach((p, idx) => p.originalIndex = idx);
+
+projects.forEach(p => {
+  if (p.subProjects && p.subProjects.length > 0) {
+    let mergedLangs = new Set(p.langs || []);
+    let mergedTools = new Set(p.tools || []);
+    
+    p.subProjects.forEach(sub => {
+      (sub.langs || []).forEach(lang => mergedLangs.add(lang));
+      (sub.tools || []).forEach(tool => mergedTools.add(tool));
+    });
+    
+    p.langs = Array.from(mergedLangs);
+    p.tools = Array.from(mergedTools);
+  }
+});
+
+function renderRows(items) {
+  const container = document.getElementById("projectsList");
+  container.innerHTML = items.map((p, idx) => {
+    
+    // Action Buttons
+    const links = [];
+    if (p.repo) {
+      links.push(`<a href="https://github.com/${GH_USERNAME}/${p.repo}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; width: 100%; justify-content: center;" onclick="event.stopPropagation()"><i class="fab fa-github"></i> Code</a>`);
+    }
+    if (p.link) {
+      links.push(`<a href="${p.link}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; width: 100%; justify-content: center;" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Web</a>`);
+    }
+    if (p.report) {
+      if (p.requiresPermission) {
+        links.push(`<a href="#" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; width: 100%; justify-content: center;" onclick="event.preventDefault(); event.stopPropagation(); openPermissionModal('${p.report}')"><i class="fas fa-file-pdf"></i> Report</a>`);
+      } else {
+        links.push(`<a href="${p.report}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; width: 100%; justify-content: center;" onclick="event.stopPropagation()"><i class="fas fa-file-pdf"></i> Report</a>`);
+      }
+    }
+
+    const actionBtns = links.length > 0 ? `<div style="display: flex; flex-direction: column; gap: 4px; min-width: 75px;">${links.join("")}</div>` : '';
+
+    // Sub-Projects HTML generator
+    let subProjectsHtml = '';
+    if (p.subProjects && p.subProjects.length > 0) {
+      subProjectsHtml = `
+        <div class="sub-projects-container">
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">System Modules:</div>
+          ${p.subProjects.map(sub => {
+            const subLangs = sub.langs ? sub.langs.map(l => `<span class="tag lang" style="font-size:0.65rem; padding:1px 5px;">${l}</span>`).join("") : "";
+            const subTools = sub.tools ? sub.tools.map(t => `<span class="tag" style="font-size:0.65rem; padding:1px 5px;">${t}</span>`).join("") : "";
+            
+            const subGallery = (sub.images && sub.images.length > 0) ? `
+              <div class="project-gallery" style="margin-top: 10px; margin-bottom: 2px;">
+                ${sub.images.map(imgSrc => `<img src="${imgSrc}" alt="${sub.title} Visual" loading="lazy" onclick="openLightbox(this.src)" style="height: 130px;" />`).join("")}
+              </div>
+            ` : '';
+
+            return `
+              <div class="sub-project-card" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; width: 100%;">
+                  <div class="sub-project-info" style="padding-right: 0;">
+                    <h4>${sub.title}</h4>
+                    <p>${sub.desc}</p>
+                    <div class="tech-tags" style="margin-top: 6px;">
+                      ${subLangs}${subTools}
+                    </div>
+                  </div>
+                  <div class="sub-project-btn-container">
+                    <a href="https://github.com/${GH_USERNAME}/${sub.repo}" target="_blank" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem; white-space: nowrap;">
+                      <i class="fab fa-github"></i> View
+                    </a>
+                  </div>
+                </div>
+                ${subGallery}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="project-row" id="row-${idx}">
+        <div class="row-header" onclick="toggleRow(${idx})">
+          <div class="project-title-col">
+            ${p.year ? `<div style="font-size: 0.95rem; font-weight: 800; color: #f0f6fc; margin-bottom: 2px; font-family: var(--font-mono);">${p.year}</div>` : ''}
+            <div class="project-category" style="margin-bottom: 4px;">${p.category}</div>
+            <h2>${p.title}</h2>
+          </div>
+          <div class="project-desc-col">
+            ${p.desc}
+          </div>
+          <div class="tech-tags">
+            ${p.langs.map(l => `<span class="tag lang">${l}</span>`).join("")}
+            ${p.tools.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join("")}
+            ${p.tools.length > 3 ? `<span class="tag">+${p.tools.length - 3}</span>` : ""}
+          </div>
+          <div class="row-actions">
+            ${actionBtns}
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+        </div>
+        <div class="row-details">
+          <div class="details-content">
+            <div style="font-weight: 600; color: var(--accent-blue); margin-bottom: 6px; font-size: 0.85rem;">
+              <i class="fas fa-layer-group me-1"></i> Technical Stack: ${p.langs.concat(p.tools).join(" · ")}
+            </div>
+            <ul>
+              ${p.details.map(d => `<li>${d}</li>`).join("")}
+            </ul>
+            
+            ${p.images && p.images.length > 0 ? `
+              <div class="project-gallery">
+                ${p.images.map(imgSrc => `<img src="${imgSrc}" alt="Project Visual" loading="lazy" onclick="openLightbox(this.src)" />`).join("")}
+              </div>
+            ` : ""}
+
+            ${subProjectsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleRow(idx) {
+  const row = document.getElementById(`row-${idx}`);
+  row.classList.toggle("open");
+}
+
+// Lightbox Logic
+function openLightbox(src) {
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  lightbox.style.display = "block";
+  lightboxImg.src = src;
+  document.body.style.overflow = "hidden"; // Prevent background scrolling
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = "none";
+  document.body.style.overflow = "auto"; // Restore background scrolling
+}
+
+// Permission Modal Logic
+function openPermissionModal(link) {
+  const modal = document.getElementById('permissionModal');
+  const btn = document.getElementById('askPermissionBtn');
+  btn.href = link; // Sets the Google Drive link
+  modal.style.display = "flex"; // Show the modal
+  document.body.style.overflow = "hidden"; // Prevent background scrolling
+}
+
+function closePermissionModal(e) {
+  if(e) e.stopPropagation();
+  document.getElementById('permissionModal').style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+renderRows(projects);
+
+// Build Dynamic Filter Dropdown Buttons
+function buildFilterDropdown() {
+  const topics = new Set();
+  const langs = new Set();
+  const tools = new Set();
+  
+  projects.forEach(p => {
+    if(p.topics) p.topics.forEach(t => topics.add(t));
+    if(p.langs) p.langs.forEach(l => langs.add(l));
+    if(p.tools) p.tools.forEach(t => tools.add(t));
+  });
+  
+  const menu = document.getElementById('filterDropdown');
+  let html = `<div style="margin-bottom: 12px;"><button class="filter-chip active" style="width: 100%; justify-content: center; margin:0;" onclick="setFilter('all', this)">All Projects</button></div>`;
+  
+  if (topics.size > 0) {
+    html += `<div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin: 10px 0 8px;">Topics</div>`;
+    html += `<div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+    Array.from(topics).sort().forEach(t => html += `<button class="filter-chip" style="padding: 4px 10px; font-size: 0.75rem; margin:0;" onclick="setFilter('${t}', this)">${t}</button>`);
+    html += `</div>`;
+  }
+  
+  if (langs.size > 0) {
+    html += `<div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin: 16px 0 8px;">Languages</div>`;
+    html += `<div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+    Array.from(langs).sort().forEach(l => html += `<button class="filter-chip" style="padding: 4px 10px; font-size: 0.75rem; margin:0;" onclick="setFilter('${l}', this)">${l}</button>`);
+    html += `</div>`;
+  }
+  
+  if (tools.size > 0) {
+    html += `<div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin: 16px 0 8px;">Tools & Stack</div>`;
+    html += `<div style="display: flex; flex-wrap: wrap; gap: 6px;">`;
+    Array.from(tools).sort().forEach(t => html += `<button class="filter-chip" style="padding: 4px 10px; font-size: 0.75rem; margin:0;" onclick="setFilter('${t}', this)">${t}</button>`);
+    html += `</div>`;
+  }
+  
+  menu.innerHTML = html;
+}
+buildFilterDropdown();
+
+// Filter & Search Logic
+const searchInput = document.getElementById("searchInput");
+let activeFilter = 'all';
+
+function setFilter(value, btnElement) {
+  activeFilter = value;
+  document.getElementById('filterLabel').innerText = value === 'all' ? 'All Projects' : value;
+  document.getElementById('filterDropdown').style.display = 'none';
+  
+  // Update active class
+  document.querySelectorAll('#filterDropdown .filter-chip').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+  
+  applyFilters();
+}
+
+// Custom toggle dropdown
+document.getElementById('filterDropdownToggle').onclick = function(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('filterDropdown');
+  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+};
+
+// Close dropdown if clicked outside
+document.addEventListener('click', function(event) {
+  const container = document.getElementById('filterContainer');
+  const dropdown = document.getElementById('filterDropdown');
+  if (container && !container.contains(event.target)) {
+    if (dropdown) dropdown.style.display = 'none';
+  }
+});
+
+function applyFilters() {
+  const query = searchInput.value.toLowerCase().trim();
+  const sortMode = document.getElementById("sortSelect").value;
+  let filtered = projects.filter(p => {
+    const matchesFilter = activeFilter === "all" || 
+      (p.topics || []).includes(activeFilter) || 
+      (p.langs || []).includes(activeFilter) || 
+      (p.tools || []).includes(activeFilter);
+    const matchesSearch = query === "" || 
+      p.title.toLowerCase().includes(query) || 
+      p.desc.toLowerCase().includes(query) || 
+      (p.category && p.category.toLowerCase().includes(query)) ||
+      (p.year && p.year.includes(query)) ||
+      (p.tools || []).some(t => t.toLowerCase().includes(query)) ||
+      (p.langs || []).some(l => l.toLowerCase().includes(query)) ||
+      (p.topics || []).some(t => t.toLowerCase().includes(query));
+    return matchesFilter && matchesSearch;
+  });
+  
+  filtered.sort((a, b) => {
+    if (sortMode === 'year_desc') {
+      const yearA = parseInt(a.year) || 0;
+      const yearB = parseInt(b.year) || 0;
+      return yearB - yearA;
+    } else if (sortMode === 'year_asc') {
+      const yearA = parseInt(a.year) || 9999;
+      const yearB = parseInt(b.year) || 9999;
+      return yearA - yearB;
+    } else if (sortMode === 'alpha') {
+      return a.title.localeCompare(b.title);
+    } else {
+      return a.originalIndex - b.originalIndex;
+    }
+  });
+
+  renderRows(filtered);
+}
+
+searchInput.addEventListener("input", applyFilters);
+</script>
+<script data-goatcounter="https://mtonell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
