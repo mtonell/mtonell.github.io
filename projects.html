@@ -322,6 +322,27 @@ const projects = [
       "Integrated external LLM APIs to provide context-aware educational assistance.",
       "Utilized the Gemini API to generate personalized notes, summaries, and recommendations."
     ]
+  },
+  
+  {
+    title: "RSNA Knee Abnormality Detection",
+    category: "Healthcare AI",
+    topics: ["Computer Vision", "Medical AI", "Explainable AI"],
+    desc: "A computer vision project for detecting knee abnormalities in MRI scans.",
+    langs: ["Python"],
+    tools: ["PyTorch", "OpenCV", "Explainable AI", "Medical Imaging"],
+    repo: "knee-abnormality-detection-rsna",
+    year: "2026",
+    images: ["https://raw.githubusercontent.com/mtonell/knee-abnormality-detection-rsna/main/assets/effusion-example.png",
+             "https://raw.githubusercontent.com/mtonell/knee-abnormality-detection-rsna/main/assets/crop_and_zoom_pipeline.png", 
+             "https://raw.githubusercontent.com/mtonell/knee-abnormality-detection-rsna/main/assets/mri_planes_and_contrasts_grid.png", 
+             "https://raw.githubusercontent.com/mtonell/knee-abnormality-detection-rsna/main/assets/volumetric_3d_slice_model.png"],
+    link: "https://www.kaggle.com/code/mtonello/rsna-knee-abnormality-detection-demo",
+    details: [
+      "Engineered a lightweight 2.5D vision pipeline coupling ConvNeXt-Nano and RadImageNet architectures for automated multi-sequence MRI diagnosis.",
+      "Designed a self-training loop utilizing a 3-LLM consensus distillation to extract weak supervision labels from unstructured radiology reports.",
+      "Integrated hierarchical Explainable AI (Gated Attention MIL and Grad-CAM) to pinpoint diagnostic depth slices and localize structural lesions."
+    ]
   }
 ];
 
