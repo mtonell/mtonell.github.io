@@ -86,7 +86,7 @@ const projects = [
     title: "Deep Learning Framework for UAV-Mounted GPR Hazard Detection",
     category: "Master Thesis / Space Applications",
     year: "2026",
-    topics: ["Deep Learning", "Robotics", "Computer Vision", "Multimodal Sensor Fusion", "Domain Adaptation", "Object Detection"],
+    topics: ["Deep Learning", "Robotics", "Computer Vision", "Sensor Fusion", "Domain Adaptation", "Object Detection"],
     desc: "Engineered deep learning framework tailored for UAV-mounted GPR threat detection, using specific image preprocessing, multimodal sensor fusion, and offline TTA to mitigate domain shifts.",
     langs: ["Python", "C++"],
     tools: ["PyTorch", "ROS 2", "Docker", "OpenCV", "Ultralytics", "TensorBoard", "DearPyGUI"],
@@ -123,7 +123,7 @@ const projects = [
     year: "2026",
     images: ["https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/demo.webp", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/readme_refinement_showcase.jpg", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/real_image_flow.jpg", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/latency_vs_accuracy.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-court-tracker/main/assets/cdf_window.png"],
         langs: ["Python", "C++"],
-        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Hough Transforms", "Homography"]
+        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Hough Transforms"]
       },
       {
         title: "Module 2: Ball Event Tracker",
@@ -132,7 +132,7 @@ const projects = [
     year: "2026",
     images: ["https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/demo.webp", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/architecture_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/window_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/speed_results.png", "https://raw.githubusercontent.com/mtonell/tennis-vision-ball-event/main/assets/tuning_impact_results.png"],
         langs: ["Python"],
-        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Object Detection", "Sequence Analysis"]
+        tools: ["PyTorch", "Scikit-Learn", "OpenCV", "Object Detection"]
       }
     ]
   },
@@ -158,8 +158,8 @@ const projects = [
     year: "2023",
     topics: ["Computer Vision", "Robotics", "PRISMA Review"],
     desc: "Systematic literature review following PRISMA protocol on state-of-the-art 6D object pose estimation under heavy occlusion.",
-    langs: ["MATLAB", "Python"],
-    tools: ["PRISMA Protocol", "Pose Estimation"],
+    langs: [],
+    tools: [],
     link: "https://thesis.unipd.it/handle/20.500.12608/52406",
     report: "https://thesis.unipd.it/retrieve/07a9c587-3a6e-4d82-a3b6-74dd1917e8f5/Tonello_Matteo.pdf", 
     details: [
@@ -234,7 +234,7 @@ const projects = [
     topics: ["Robotics", "Embedded Systems", "Mobile Robotics"],
     desc: "Constructed a DIY Bluetooth-controlled robot with Arduino Nano, capable of line following, obstacle avoidance, gesture-based control, and LED expressions.",
     langs: ["C++"],
-    tools: ["Arduino", "Bluetooth", "MIT App Inventor"],
+    tools: ["Arduino", "MIT App Inventor"],
     repo: "TonyBot",
     year: "2025",
     images: ["https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/videos/mode_line_follower.gif", "https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/images/robot_showcase.jpg", "https://raw.githubusercontent.com/mtonell/TonyBot/main/docs/images/circuit_schema.png"],
@@ -246,7 +246,7 @@ const projects = [
   {
     title: "Structure from Motion (SfM) Pipeline",
     category: "3D Computer Vision",
-    topics: ["Computer Vision", "3D Vision", "3D Reconstruction"],
+    topics: ["Computer Vision", "3D Vision"],
     desc: "C++ implementation of a Structure from Motion (SfM) pipeline for 3D reconstruction from 2D image sequences.",
     langs: ["C++"],
     tools: ["OpenCV", "Epipolar Geometry", "Triangulation", "Bundle Adjustment"],
@@ -261,10 +261,10 @@ const projects = [
   {
     title: "LocalPointNet 3D Descriptor",
     category: "3D Deep Learning",
-    topics: ["Computer Vision", "Deep Learning", "3D Vision", "Point Clouds"],
+    topics: ["Computer Vision", "Deep Learning", "3D Vision"],
     desc: "Python implementation of LocalPointNet for extracting robust 3D local descriptors from point clouds.",
     langs: ["Python"],
-    tools: ["Open3D", "Feature Extraction", "PyTorch", "CMake", "PointNet"],
+    tools: ["Open3D", "Feature Extraction", "PyTorch", "CMake", "PointNet",  "Point Clouds"],
     repo: "LocalPointNet-3D-descriptor",
     year: "2024",
     images: ["https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/visualization_anchor.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/visualization_neg_pos.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/original_architecture.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/report_loss_curve.png", "https://raw.githubusercontent.com/mtonell/LocalPointNet-3D-descriptor/main/images/report_noise_robustness.png"],
@@ -277,10 +277,10 @@ const projects = [
   {
     title: "2D Quadcopter Control Simulation",
     category: "Robotics & Simulation",
-    topics: ["Robotics", "Control Systems", "Simulation"],
+    topics: ["Robotics", "Control Systems"],
     desc: "MATLAB-based simulation modeling 2D quadcopter flight dynamics and control systems.",
     langs: ["MATLAB"],
-    tools: ["PID Controller", "Flight Dynamics", "MathWorks"],
+    tools: ["PID Controller", "Flight Dynamics"],
     repo: "2d-quadcopter-control-simulation",
     year: "2024",
     images: ["https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/figure8.gif", "https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/diamond.gif", "https://raw.githubusercontent.com/mtonell/2d-quadcopter-control-simulation/main/media/sine.gif"],
@@ -309,10 +309,10 @@ const projects = [
   {
     title: "Interactive AI Tutor",
     category: "Web & Generative AI",
-    topics: ["Generative AI", "Web Development", "LLMs"],
+    topics: ["LLMs"],
     desc: "Interactive AI tutoring web application built with JavaScript to assist users with real-time educational feedback.",
     langs: ["JavaScript"],
-    tools: ["LLM APIs", "Frontend Web", "UX Design", "Chat Interface"],
+    tools: ["LLM APIs", "Frontend Web"],
     repo: "tutor-ai",
     year: "2026",
     images: ["https://raw.githubusercontent.com/mtonell/tutor-ai/main/frontend/public/logo.png"],
@@ -327,10 +327,10 @@ const projects = [
   {
     title: "RSNA Knee Abnormality Detection",
     category: "Healthcare AI",
-    topics: ["Computer Vision", "Medical AI", "Explainable AI"],
+    topics: ["Computer Vision", "Healthcare AI", "Explainable AI"],
     desc: "A computer vision project for detecting knee abnormalities in MRI scans.",
     langs: ["Python"],
-    tools: ["PyTorch", "OpenCV", "Explainable AI", "Medical Imaging"],
+    tools: ["PyTorch", "OpenCV", "Gated Attention MIL", "Grad-CAM", "Medical Imaging"],
     repo: "knee-abnormality-detection-rsna",
     year: "2026",
     images: ["https://raw.githubusercontent.com/mtonell/knee-abnormality-detection-rsna/main/assets/effusion-example.png",
